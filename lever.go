@@ -10,9 +10,9 @@
 //
 //	// -- or - can be used, or really anything, or nothing! Check the Name field
 //	// doc for more specific rules
-//	f.Add(Param{Name: "--foo"})
-//	f.Add(Param{Name: "--bar", Default: "something"})
-//	f.Add(Param{Name: "--foo-bar", Flag: true})
+//	f.Add(lever.Param{Name: "--foo"})
+//	f.Add(lever.Param{Name: "--bar", Default: "something"})
+//	f.Add(lever.Param{Name: "--foo-bar", Flag: true})
 //	f.Parse()
 //
 // "myapp" is the name of the application using lever, and nil could be a set
@@ -80,7 +80,7 @@
 // to specify a Param in a special way, only retrieve it in a special way:
 //
 //	f := lever.New("myapp2", nil)
-//	f.Add(Param{Name: "--multi"})
+//	f.Add(lever.Param{Name: "--multi"})
 //	f.Parse
 //
 //	// ./myapp2 --multi foo --multi bar
@@ -529,7 +529,7 @@ func (f *Lever) defaultsAsFound() map[string][]string {
 
 func mergeFound(into, from map[string][]string) {
 	for n, p := range from {
-		if _, ok := into[n]; ok {
+		if _, ok := into[n]; !ok {
 			into[n] = p
 		}
 	}
