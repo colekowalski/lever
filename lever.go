@@ -643,15 +643,17 @@ func (f *Lever) ParamInts(name string) ([]int, bool) {
 // param need only be set with no value to take on the opposite value of its
 // Default. This almost always means that if the flag is set true is returned.
 func (f *Lever) ParamFlag(name string) bool {
-	v, ok := f.paramSingleStr(name)
+	v, _ := f.paramSingleStr(name)
+	p, ok := f.expectedFull[name]
 	if !ok {
-		return false
+		// This is kind of weird but whatever, do something kind of sane
+		return v != ""
 	}
-
-	if v == "true" {
-		return true
+	def := p.flagDefault()
+	if v == "" || v == "false" {
+		return def
 	}
-	return false
+	return !def
 }
 
 // ParamRest returns any command line parameters which were passed in by the
