@@ -13,6 +13,7 @@
 //	f.Add(lever.Param{Name: "--foo"})
 //	f.Add(lever.Param{Name: "--bar", Default: "something"})
 //	f.Add(lever.Param{Name: "--foo-bar", Flag: true})
+//	f.Add(lever.Param{Name: "--baz", EnvVar: "ENV_VARIABLE"})
 //	f.Parse()
 //
 // "myapp" is the name of the application using lever, and nil could be a set
@@ -44,12 +45,13 @@
 //
 // Using environment variables
 //
-// For the above app, environment variables could be set like (Note the
-// prepending of the app's name):
-//
+// For the above app, environment variables could be set as follows://
 //	export MYAPP_FOO=foo
 //	export MYAPP_FOO_BAR=true
 //	./myapp
+//
+// (Note the prepending of the app's name). The environment variable to be
+// checked can be overridden by specifying the EnvVar field in the Param.
 //
 // Using a config file
 //
@@ -140,6 +142,9 @@ type Param struct {
 	// which should be used. nil means to refer to Default, empty slice means
 	// the default is no entries
 	DefaultMulti []string
+
+	// The environment variable that may contain a value for a particular Param.
+	EnvVar string
 
 	// If the param is a flag (boolean switch, it doesn't expect a value), this
 	// must be set to true
@@ -495,7 +500,10 @@ func (f *Lever) readEnv(environ []string) map[string][]string {
 	expectedEnv := map[string]*Param{}
 
 	for _, p := range f.expected {
-		n := appNameEnv + "_" + envify(p.configName())
+		var n = p.EnvVar
+		if n == "" {
+			n = appNameEnv + "_" + envify(p.configName())
+		}
 		expectedEnv[n] = p
 	}
 

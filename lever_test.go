@@ -200,17 +200,20 @@ buz: c
 func TestReadEnv(t *T) {
 	f := testLever(false)
 	f.Add(Param{Name: "--foo-bar"})
+	f.Add(Param{Name: "--custom-env", EnvVar: "SOME_ODD_VAR"})
 
 	env := []string{
 		"TEST_APP_BAR=bar",
 		"TEST_APP_FLAG1=true",
 		"HOME=whatever",
 		"TEST_APP_FOO_BAR=okthen",
+		"SOME_ODD_VAR=blah",
 	}
 
 	assert.Equal(t, map[string][]string{
-		"--bar":     []string{"bar"},
-		"--flag1":   []string{"true"},
-		"--foo-bar": []string{"okthen"},
+		"--bar":        []string{"bar"},
+		"--flag1":      []string{"true"},
+		"--foo-bar":    []string{"okthen"},
+		"--custom-env": []string{"blah"},
 	}, f.readEnv(env))
 }
